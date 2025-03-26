@@ -1,0 +1,4 @@
+[wrap-git]
+url = git@github.com:djazo/cpp-baremetal-senders-and-receivers.git
+revision = meson
+depth = 1
