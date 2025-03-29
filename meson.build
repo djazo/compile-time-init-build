@@ -10,7 +10,7 @@ fmt_sub = subproject('fmt')
 fmt_dep = fmt_sub.get_variable('fmt_dep')
 
 baremetal_concurrency_sub = subproject('cpp-baremetal-concurrency')
-baremetal_concurrency_dep = concurrency_sub.get_variable('baremetal_concurrency_dep')
+baremetal_concurrency_dep = baremetal_concurrency_sub.get_variable('baremetal_concurrency_dep')
 
 stdx_sub = subproject('cpp-std-extensions')
 stdx_dep = stdx_sub.get_variable('stdx_dep')
