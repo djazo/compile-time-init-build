@@ -15,7 +15,7 @@ baremetal_concurrency_dep = baremetal_concurrency_sub.get_variable('baremetal_co
 stdx_sub = subproject('cpp-std-extensions')
 stdx_dep = stdx_sub.get_variable('stdx_dep')
 
-async_sub = subproject('cpp-baremetal-senders-and-recievers')
+async_sub = subproject('cpp-baremetal-senders-and-receivers')
 async_dep = async_sub.get_variable('async_dep')
 
 inc = include_directories('include')
