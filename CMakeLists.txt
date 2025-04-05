@@ -24,31 +24,13 @@ include(cmake/string_catalog.cmake)
 
 add_versioned_package("gh:boostorg/mp11#boost-1.83.0")
 fmt_recipe(11.1.3)
-add_versioned_package("gh:intel/cpp-baremetal-concurrency#7c5b26c")
-add_versioned_package("gh:intel/cpp-std-extensions#7725142")
-add_versioned_package("gh:intel/cpp-baremetal-senders-and-receivers#0525974")
+add_versioned_package("gh:intel/cpp-baremetal-concurrency#0ddce52")
+add_versioned_package("gh:intel/cpp-std-extensions#7e1cbc7")
+add_versioned_package("gh:intel/cpp-baremetal-senders-and-receivers#22c8006")
 
 set(GEN_STR_CATALOG
     ${CMAKE_CURRENT_LIST_DIR}/tools/gen_str_catalog.py
     CACHE FILEPATH "Location of script to generate a string catalog")
-
-add_library(cib_sc INTERFACE)
-target_compile_features(cib_sc INTERFACE cxx_std_20)
-target_link_libraries_system(cib_sc INTERFACE fmt::fmt-header-only stdx)
-
-target_sources(
-    cib_sc
-    INTERFACE FILE_SET
-              sc
-              TYPE
-              HEADERS
-              BASE_DIRS
-              include
-              FILES
-              include/sc/format.hpp
-              include/sc/fwd.hpp
-              include/sc/lazy_string_format.hpp
-              include/sc/string_constant.hpp)
 
 add_library(cib_match INTERFACE)
 target_compile_features(cib_match INTERFACE cxx_std_20)
@@ -241,7 +223,7 @@ target_sources(
 
 add_library(cib_flow INTERFACE)
 target_compile_features(cib_flow INTERFACE cxx_std_20)
-target_link_libraries_system(cib_flow INTERFACE cib_log cib_nexus cib_sc stdx)
+target_link_libraries_system(cib_flow INTERFACE cib_log cib_nexus stdx)
 
 target_sources(
     cib_flow
@@ -266,14 +248,7 @@ target_sources(
 
 add_library(cib_seq INTERFACE)
 target_compile_features(cib_seq INTERFACE cxx_std_20)
-target_link_libraries_system(
-    cib_seq
-    INTERFACE
-    cib_flow
-    cib_log
-    cib_nexus
-    cib_sc
-    stdx)
+target_link_libraries_system(cib_seq INTERFACE cib_flow cib_log cib_nexus stdx)
 
 target_sources(
     cib_seq
@@ -303,7 +278,6 @@ target_link_libraries_system(
     cib_match
     cib_msg
     cib_nexus
-    cib_sc
     cib_seq
     concurrency
     fmt::fmt-header-only
@@ -333,7 +307,6 @@ if(PROJECT_IS_TOP_LEVEL)
     clang_tidy_interface(cib_match)
     clang_tidy_interface(cib_msg)
     clang_tidy_interface(cib_nexus)
-    clang_tidy_interface(cib_sc)
     clang_tidy_interface(cib_seq)
 
     # Enable functional and performance test suites.
