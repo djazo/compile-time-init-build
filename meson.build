@@ -3,6 +3,8 @@ project('cib',['cpp'],
   default_options: ['cpp_std=c++20']
   )
 
+cmake = import('cmake')
+
 boostmp11_sub = subproject('boostmp11')
 boostmp11_dep = boostmp11_sub.get_variable('boostmp11_dep')
 
@@ -17,6 +19,13 @@ stdx_dep = stdx_sub.get_variable('stdx_dep')
 
 async_sub = subproject('cpp-baremetal-senders-and-receivers')
 async_dep = async_sub.get_variable('async_dep')
+
+# check test
+
+if get_option('build_tests')
+  cicd_proj = cmake.subproject('cicd')
+  subdir('test')
+endif
 
 inc = include_directories('include')
 
