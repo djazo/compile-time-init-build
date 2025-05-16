@@ -22,11 +22,6 @@ async_dep = async_sub.get_variable('async_dep')
 
 # check test
 
-if get_option('build_tests')
-  cicd_proj = cmake.subproject('cicd')
-  subdir('test')
-endif
-
 inc = include_directories('include')
 
 cib_dep = declare_dependency(
