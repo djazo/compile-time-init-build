@@ -5,8 +5,9 @@ cmake = import('cmake')
 boostmp11_sub = subproject('boostmp11')
 boostmp11_dep = boostmp11_sub.get_variable('boostmp11_dep')
 
-fmt_sub = subproject('fmt')
-fmt_dep = fmt_sub.get_variable('fmt_header_only_dep')
+fmt_sub = subproject('fmt',
+  default_options: ['header-only'])
+fmt_dep = fmt_sub.get_variable('fmt_dep')
 
 baremetal_concurrency_sub = subproject('cpp-baremetal-concurrency')
 baremetal_concurrency_dep = baremetal_concurrency_sub.get_variable(
