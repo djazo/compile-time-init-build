@@ -28,6 +28,7 @@ struct callback {
     }
 
     template <stdx::ct_string Extra = "", typename... Args>
+    // NOLINTNEXTLINE (readability-function-cognitive-complexity)
     [[nodiscard]] auto handle(auto const &data, Args &&...args) const -> bool {
         CIB_LOG_ENV(logging::get_level, logging::level::INFO);
         if (msg::call_with_message<Msg>(matcher, data)) {
