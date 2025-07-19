@@ -42,9 +42,9 @@ The library dependencies are:
 
 _cib_ contains several parts that work together:
 
-- xref:flow.adoc#_the_flow_library[`flow`]
+- xref:flows.adoc#_the_flow_library[`flow`]
 - xref:logging.adoc#_the_logging_library[`logging`]
-- xref:interrupt.adoc#_the_interrupt_library[`interrupt`]
+- xref:interrupts.adoc#_the_interrupt_library[`interrupt`]
 - xref:match.adoc#_the_match_library[`match`]
 - xref:message.adoc#_the_message_library[`message`]
 
