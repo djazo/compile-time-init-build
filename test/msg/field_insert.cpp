@@ -16,6 +16,13 @@ TEST_CASE("single bit", "[field insert]") {
     CHECK(0b010u == data[0]);
 }
 
+TEST_CASE("into integral type", "[field insert]") {
+    using F = field<"", std::uint32_t>::located<at{0_dw, 1_msb, 1_lsb}>;
+    std::uint32_t data{};
+    F::insert(data, 1u);
+    CHECK(0b010u == data);
+}
+
 TEST_CASE("within one storage element", "[field insert]") {
     using F = field<"", std::uint32_t>::located<at{0_dw, 16_msb, 5_lsb}>;
     std::array<std::uint32_t, 1> data{0b10'0000'0000'0001'0000};
@@ -152,7 +159,7 @@ TEST_CASE("trivially_copyable field type ", "[field insert]") {
 
 TEST_CASE("value fits in field", "[field insert]") {
     using F = field<"", std::uint32_t>::located<at{0_dw, 3_msb, 0_lsb}>;
-    static_assert(F::can_hold(15));
+    STATIC_REQUIRE(F::can_hold(15));
     CHECK(F::can_hold(15));
     CHECK(not F::can_hold(16));
 }
@@ -160,7 +167,7 @@ TEST_CASE("value fits in field", "[field insert]") {
 TEST_CASE("value fits in split field", "[field insert]") {
     using F = field<"", std::uint32_t>::located<at{0_dw, 1_msb, 0_lsb},
                                                 at{0_dw, 7_msb, 6_lsb}>;
-    static_assert(F::can_hold(15));
+    STATIC_REQUIRE(F::can_hold(15));
     CHECK(F::can_hold(15));
     CHECK(not F::can_hold(16));
 }

@@ -1,3 +1,5 @@
+#pragma once
+
 #include <log/catalog/mipi_builder.hpp>
 
 #include <stdx/compiler.hpp>
@@ -15,7 +17,7 @@ namespace logging::binary {
     }
 
     CONSTEVAL auto operator()(auto &&) const {
-        return logging::mipi::default_builder{};
+        return logging::mipi::default_builder<>{};
     }
 } get_builder;
 } // namespace logging::binary

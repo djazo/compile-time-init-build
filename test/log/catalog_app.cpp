@@ -17,8 +17,12 @@ extern auto log_one_64bit_rt_arg() -> void;
 extern auto log_one_formatted_rt_arg() -> void;
 extern auto log_two_rt_args() -> void;
 extern auto log_rt_enum_arg() -> void;
-extern auto log_with_non_default_module_id() -> void;
+extern auto log_with_non_default_module() -> void;
+extern auto log_with_fixed_module() -> void;
+extern auto log_with_fixed_string_id() -> void;
 extern auto log_with_fixed_module_id() -> void;
+extern auto log_rt_float_arg() -> void;
+extern auto log_rt_double_arg() -> void;
 
 TEST_CASE("log zero arguments", "[catalog]") {
     test_critical_section::count = 0;
@@ -56,6 +60,22 @@ TEST_CASE("log one 64-bit runtime argument", "[catalog]") {
     CHECK(log_calls == 1);
 }
 
+TEST_CASE("log one float runtime argument", "[catalog]") {
+    log_calls = 0;
+    test_critical_section::count = 0;
+    log_rt_float_arg();
+    CHECK(test_critical_section::count == 2);
+    CHECK(log_calls == 1);
+}
+
+TEST_CASE("log one double runtime argument", "[catalog]") {
+    log_calls = 0;
+    test_critical_section::count = 0;
+    log_rt_double_arg();
+    CHECK(test_critical_section::count == 2);
+    CHECK(log_calls == 1);
+}
+
 TEST_CASE("log one formatted runtime argument", "[catalog]") {
     log_calls = 0;
     test_critical_section::count = 0;
@@ -87,9 +107,28 @@ TEST_CASE("log module ids change", "[catalog]") {
     CHECK((last_header & expected_static) == expected_static);
 
     auto default_header = last_header;
-    log_with_non_default_module_id();
+    log_with_non_default_module();
     CHECK((last_header & expected_static) == expected_static);
     CHECK((last_header ^ default_header) == (1u << 16u));
+}
+
+TEST_CASE("log with stable module id", "[catalog]") {
+    std::uint32_t expected_static = (1u << 24u) | (7u << 4u) | 3u;
+
+    log_with_fixed_module();
+    CHECK((last_header & expected_static) == expected_static);
+    // module ID 17 is fixed by stable_strings.json
+    CHECK((last_header & ~expected_static) == (17u << 16u));
+}
+
+TEST_CASE("log with fixed string id", "[catalog]") {
+    test_critical_section::count = 0;
+    log_calls = 0;
+    log_with_fixed_string_id();
+    CHECK(test_critical_section::count == 2);
+    CHECK(log_calls == 1);
+    // string ID 1337 is fixed by environment
+    CHECK(last_header == ((1337u << 4u) | 1u));
 }
 
 TEST_CASE("log with fixed module id", "[catalog]") {
@@ -97,5 +136,6 @@ TEST_CASE("log with fixed module id", "[catalog]") {
 
     log_with_fixed_module_id();
     CHECK((last_header & expected_static) == expected_static);
-    CHECK((last_header & ~expected_static) == (17u << 16u));
+    // module ID 7 is fixed by environment
+    CHECK((last_header & ~expected_static) == (7u << 16u));
 }

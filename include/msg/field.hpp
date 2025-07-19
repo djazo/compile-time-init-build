@@ -10,6 +10,7 @@
 #include <stdx/ct_string.hpp>
 #include <stdx/iterator.hpp>
 #include <stdx/ranges.hpp>
+#include <stdx/span.hpp>
 #include <stdx/type_traits.hpp>
 
 #include <algorithm>
@@ -20,6 +21,7 @@
 #include <limits>
 #include <span>
 #include <type_traits>
+#include <utility>
 
 namespace msg {
 template <typename T>
@@ -277,21 +279,21 @@ enum struct lsb_t : std::uint32_t {};
 
 inline namespace literals {
 // NOLINTNEXTLINE(google-runtime-int)
-CONSTEVAL auto operator""_bi(unsigned long long int v) -> byte_index_t {
+CONSTEVAL_UDL auto operator""_bi(unsigned long long int v) -> byte_index_t {
     return static_cast<byte_index_t>(v);
 }
-CONSTEVAL auto operator""_dwi(unsigned long long int v) -> dword_index_t {
+CONSTEVAL_UDL auto operator""_dwi(unsigned long long int v) -> dword_index_t {
     return static_cast<dword_index_t>(v);
 }
-CONSTEVAL auto operator""_dw(unsigned long long int v) -> dword_index_t {
+CONSTEVAL_UDL auto operator""_dw(unsigned long long int v) -> dword_index_t {
     return static_cast<dword_index_t>(v);
 }
 // NOLINTNEXTLINE(google-runtime-int)
-CONSTEVAL auto operator""_lsb(unsigned long long int v) -> lsb_t {
+CONSTEVAL_UDL auto operator""_lsb(unsigned long long int v) -> lsb_t {
     return static_cast<lsb_t>(v);
 }
 // NOLINTNEXTLINE(google-runtime-int)
-CONSTEVAL auto operator""_msb(unsigned long long int v) -> msb_t {
+CONSTEVAL_UDL auto operator""_msb(unsigned long long int v) -> msb_t {
     return static_cast<msb_t>(v);
 }
 } // namespace literals
@@ -330,6 +332,9 @@ struct at {
     }
     [[nodiscard]] constexpr auto lsb() const -> std::underlying_type_t<lsb_t> {
         return stdx::to_underlying(lsb_) % 32u;
+    }
+    [[nodiscard]] constexpr auto msb() const -> std::underlying_type_t<msb_t> {
+        return stdx::to_underlying(msb_);
     }
     [[nodiscard]] constexpr auto size() const -> std::underlying_type_t<lsb_t> {
         return stdx::to_underlying(msb_) - stdx::to_underlying(lsb_) + 1;
@@ -424,11 +429,25 @@ class field_t : public field_spec_t<Name, T, detail::field_size<Ats...>>,
         return locator_t::template extract<spec_t>(std::forward<R>(r));
     }
 
+    template <std::unsigned_integral U>
+    [[nodiscard]] constexpr static auto extract(U const &u) -> value_type {
+        static_assert(stdx::bit_size<U>() > std::max({0u, Ats.msb()...}),
+                      "Field location is outside the range of argument!");
+        return extract(stdx::span{std::addressof(u), 1});
+    }
+
     template <stdx::range R>
     constexpr static void insert(R &&r, value_type const &value) {
         static_assert(is_mutable_value<field_t>,
                       "Can't change a field with a required value!");
         locator_t::template insert<spec_t>(std::forward<R>(r), value);
+    }
+
+    template <std::unsigned_integral U>
+    constexpr static void insert(U &u, value_type const &value) {
+        static_assert(stdx::bit_size<U>() > std::max({0u, Ats.msb()...}),
+                      "Field location is outside the range of argument!");
+        insert(stdx::span{std::addressof(u), 1}, value);
     }
 
     template <stdx::range R> constexpr static void insert_default(R &&r) {
