@@ -1,5 +1,5 @@
 #include <flow/flow.hpp>
-#include <flow/graphviz_builder.hpp>
+#include <flow/viz_builder.hpp>
 
 #include <catch2/catch_test_macros.hpp>
 
@@ -218,17 +218,48 @@ TEST_CASE("reference in order with non-reference added twice",
 
 #endif
 
-TEST_CASE("alternate builder", "[graph_builder]") {
-    using alt_builder = flow::graphviz_builder<"debug">;
-    auto g = flow::builder_for<alt_builder>{}.add(*a && (*b >> *c));
-    auto const flow = alt_builder::build(g);
-    auto expected = std::string{
+TEST_CASE("alternate builder (graphviz)", "[graph_builder]") {
+    using namespace stdx::literals;
+    using alt_builder = flow::viz_builder<"debug">;
+    constexpr auto g = flow::builder_for<alt_builder>{}.add(*a && (*b >> *c));
+    constexpr auto flow = alt_builder::build(g);
+    constexpr auto expected =
         R"__debug__(digraph debug {
-start -> a
-start -> b
-b -> c
-a -> end
-c -> end
-})__debug__"};
-    CHECK(flow == expected);
+  start
+  end
+  a
+  b
+  c
+  b -> c
+  start -> a
+  start -> b
+  a -> end
+  c -> end
+})__debug__"_cts;
+    STATIC_REQUIRE(flow == expected);
+}
+
+TEST_CASE("alternate builder (mermaid)", "[graph_builder]") {
+    using namespace stdx::literals;
+    using alt_builder = flow::viz_builder<"debug", flow::mermaid>;
+    constexpr auto g = flow::builder_for<alt_builder>{}.add(*a && (*b >> *c));
+    constexpr auto flow = alt_builder::build(g);
+
+    constexpr auto expected =
+        R"__debug__(---
+title: debug
+---
+flowchart TD
+  _start((start))
+  _end((end))
+  _a(a)
+  _b(b)
+  _c(c)
+  _b --> _c
+  _start --> _a
+  _start --> _b
+  _a --> _end
+  _c --> _end
+)__debug__"_cts;
+    STATIC_REQUIRE(flow == expected);
 }
