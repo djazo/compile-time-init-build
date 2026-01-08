@@ -26,7 +26,7 @@ include(cmake/string_catalog.cmake)
 add_versioned_package("gh:boostorg/mp11#boost-1.83.0")
 fmt_recipe(11.1.3)
 add_versioned_package("gh:intel/cpp-baremetal-concurrency#de60a38")
-add_versioned_package("gh:intel/cpp-std-extensions#a1ae0b4")
+add_versioned_package("gh:intel/cpp-std-extensions#44e1790")
 add_versioned_package("gh:intel/cpp-baremetal-senders-and-receivers#27db6e1")
 
 set(GEN_STR_CATALOG
@@ -317,6 +317,7 @@ if(PROJECT_IS_TOP_LEVEL)
     clang_tidy_interface(cib_seq)
 
     # Enable functional and performance test suites.
+    include(CTest)
     add_subdirectory(test)
     add_subdirectory(benchmark)
     add_subdirectory(examples)
