@@ -323,6 +323,7 @@ def write_json(
     d = dict(
         messages=[m.to_json() for m in messages], modules=[m.to_json() for m in modules]
     )
+    
     for m in stable_data.get("messages"):
         j = m.to_json()
         if j not in d["messages"]:

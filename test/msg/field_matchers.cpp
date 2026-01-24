@@ -4,6 +4,7 @@
 
 #include <stdx/ct_string.hpp>
 #include <stdx/tuple.hpp>
+#include <stdx/tuple_algorithms.hpp>
 
 #include <catch2/catch_test_macros.hpp>
 

@@ -42,7 +42,8 @@ template <typename Storage, packer P> struct catalog_builder {
         constexpr auto header_size = defn::catalog_msg_t::size<V>::value;
 
         auto const pack_arg = []<typename T>(V *p, T arg) -> V * {
-            typename P::template pack_as_t<T> converted{};
+            using pack_t = typename P::template pack_as_t<T>;
+            pack_t converted{};
             if constexpr (sizeof(stdx::to_underlying(arg)) ==
                           sizeof(converted)) {
                 converted = stdx::bit_cast<decltype(converted)>(

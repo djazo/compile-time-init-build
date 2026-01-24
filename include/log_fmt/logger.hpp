@@ -13,8 +13,8 @@
 
 #include <array>
 #include <chrono>
-#include <iterator>
 #include <string_view>
+#include <type_traits>
 #include <utility>
 
 namespace logging {
@@ -62,9 +62,10 @@ template <typename TDestinations> struct log_handler {
                                  get_module(Env{}));
                 constexpr auto fmtstr =
                     std::string_view{decltype(fr.str)::value};
-                fr.args.apply([&](auto const &...args) {
+                fr.args.apply([&]<typename... Args>(Args &&...args) {
                     ::fmt::format_to(out, fmtstr,
-                                     fmt_detail::decay_enum_value(args)...);
+                                     fmt_detail::decay_enum_value(
+                                         std::forward<Args>(args))...);
                 });
                 *out = '\n';
             },
