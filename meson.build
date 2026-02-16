@@ -1,12 +1,17 @@
-project('cib', ['cpp'], version: '0.1.0', default_options: ['cpp_std=c++23'])
+project(
+    'cib',
+    ['cpp'],
+    version: '0.1.0',
+    default_options: ['cpp_std=c++23'],
+    meson_version: '>=1.1',
+)
 
 cmake = import('cmake')
 
 boostmp11_sub = subproject('boostmp11')
 boostmp11_dep = boostmp11_sub.get_variable('boostmp11_dep')
 
-fmt_sub = subproject('fmt',
-  default_options: ['header-only=true'])
+fmt_sub = subproject('fmt', default_options: ['header-only=true'])
 fmt_dep = fmt_sub.get_variable('fmt_dep')
 
 baremetal_concurrency_sub = subproject('cpp-baremetal-concurrency')
